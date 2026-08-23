@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Install static Google Fonts or local font files on iOS and iPadOS.">
+    <title>iOS Font Installer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <main>
+      <header class="title-container">
+        <div>
+          <p class="eyebrow">Runs entirely in your browser</p>
+          <h1>iOS / iPadOS Font Installer</h1>
+          <p class="lede">Choose static styles from Google Fonts or bring your own font files, then create an installable Apple profile.</p>
+        </div>
+        <a class="github-link" href="https://github.com/itayfi/iOS-Font-Installer" target="_blank" rel="noopener noreferrer" aria-label="View source on GitHub">GitHub</a>
+      </header>
+
+      <noscript><div class="notice error">This tool requires JavaScript.</div></noscript>
+
+      <section class="installer" aria-labelledby="choose-fonts-title">
+        <h2 id="choose-fonts-title">1. Choose fonts</h2>
+        <div class="source-tabs" role="tablist" aria-label="Font source">
+          <button class="source-tab active" type="button" role="tab" aria-selected="true" aria-controls="google-panel" id="google-tab" data-source="google">Google Fonts</button>
+          <button class="source-tab" type="button" role="tab" aria-selected="false" aria-controls="upload-panel" id="upload-tab" data-source="upload">Upload files</button>
+        </div>
+
+        <div id="google-panel" role="tabpanel" aria-labelledby="google-tab">
+          <div class="catalog-controls">
+            <label class="search-field">
+              <span class="sr-only">Search font families</span>
+              <input type="search" id="font-search" placeholder="Search font families…" autocomplete="off">
+            </label>
+            <label>
+              <span class="sr-only">Category</span>
+              <select id="category-filter">
+                <option value="all">All categories</option>
+                <option value="SANS_SERIF">Sans serif</option>
+                <option value="SERIF">Serif</option>
+                <option value="DISPLAY">Display</option>
+                <option value="HANDWRITING">Handwriting</option>
+                <option value="MONOSPACE">Monospace</option>
+              </select>
+            </label>
+          </div>
+          <p id="catalog-status" class="muted" role="status">Loading the static-font catalog…</p>
+          <div id="font-results" class="font-results" aria-live="polite"></div>
+          <div id="family-selection" class="family-selection" hidden></div>
+        </div>
+
+        <div id="upload-panel" role="tabpanel" aria-labelledby="upload-tab" hidden>
+          <label class="file-drop button" tabindex="0">
+            Select static .ttf or .otf files
+            <input type="file" id="file-upload" multiple accept=".ttf,.otf">
+          </label>
+          <p id="file-name" class="muted">No files selected</p>
+          <div class="notice">Variable fonts and font collections cannot be installed with Apple font profiles.</div>
+        </div>
+      </section>
+
+      <section class="installer" aria-labelledby="profile-title">
+        <h2 id="profile-title">2. Configure profile</h2>
+        <form id="config-form">
+          <div class="form-grid">
+            <label>Name <span>(optional)</span><input type="text" id="payloadDisplayName" autocomplete="off"></label>
+            <label>Description <span>(optional)</span><input type="text" id="payloadDescription"></label>
+            <label class="wide">Identifier <span>(optional)</span><input type="text" id="payloadIdentifier" placeholder="com.example.font" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+          </div>
+          <div id="action-status" class="action-status" role="status"></div>
+          <div class="actions">
+            <button type="submit" class="button primary" id="prepare-button">Prepare profile</button>
+            <button type="button" class="button primary" id="download-button" hidden>Install profile</button>
+            <button type="reset" class="button">Reset</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="instructions">
+        <h2>3. Install</h2>
+        <ol>
+          <li>Prepare the profile, then tap <strong>Install profile</strong>.</li>
+          <li>Allow Safari to download the configuration profile.</li>
+          <li>Open Settings and tap <strong>Profile Downloaded</strong>, then follow the installation prompts.</li>
+        </ol>
+        <div class="notice"><strong>Note:</strong> Installed fonts are available only in apps that support custom fonts. This does not change the iOS system font.</div>
+      </section>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

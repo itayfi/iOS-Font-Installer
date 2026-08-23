@@ -1,0 +1,27 @@
+{
+  "name": "ios-font-installer",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "npm run typecheck && npm run test && vite build",
+    "catalog": "node --env-file-if-exists=.env --import tsx scripts/build-font-catalog.ts"
+  },
+  "dependencies": {
+    "plist": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.0.0",
+    "vite": "^7.0.0",
+    "vitest": "^3.0.0"
+  }
+}
