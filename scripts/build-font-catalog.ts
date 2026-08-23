@@ -51,16 +51,16 @@ function normalizeCategory(category: string): string {
 }
 
 export function buildCatalog(response: DeveloperApiResponse): GoogleFontCatalog {
-  const families: GoogleFontFamily[] = response.items.map((item) => ({
+  const families: GoogleFontFamily[] = response.items.map((item, index) => ({
     family: item.family,
     category: normalizeCategory(item.category),
+    popularityRank: index + 1,
     variants: Object.entries(item.files)
       .map(([name, url]) => variantFromApi(name, url))
       .filter((variant): variant is GoogleFontVariant => variant !== null)
       .sort((left, right) => left.weight - right.weight || left.style.localeCompare(right.style)),
   })).filter((family) => family.variants.length > 0);
 
-  families.sort((left, right) => left.family.localeCompare(right.family));
   return {
     generatedAt: new Date().toISOString(),
     source: 'Google Fonts Developer API',
@@ -70,7 +70,7 @@ export function buildCatalog(response: DeveloperApiResponse): GoogleFontCatalog 
 
 async function fetchCatalog(apiKey: string): Promise<DeveloperApiResponse> {
   const url = new URL(API_URL);
-  url.searchParams.set('sort', 'alpha');
+  url.searchParams.set('sort', 'popularity');
   url.searchParams.set('key', apiKey);
 
   for (let attempt = 0; attempt < 3; attempt += 1) {

@@ -13,24 +13,35 @@ describe('Google Fonts catalog', () => {
     expect(variantFromApi('unexpected', 'https://fonts.gstatic.com/example.ttf')).toBeNull();
   });
 
-  it('builds a catalog and normalizes API categories', () => {
-    const catalog = buildCatalog({ items: [{
-      family: 'Example Sans',
-      category: 'sans-serif',
-      files: {
-        regular: 'https://fonts.gstatic.com/regular.ttf',
-        italic: 'https://fonts.gstatic.com/italic.ttf',
+  it('preserves API popularity order and normalizes categories', () => {
+    const catalog = buildCatalog({ items: [
+      {
+        family: 'Popular Sans',
+        category: 'sans-serif',
+        files: {
+          regular: 'https://fonts.gstatic.com/popular-regular.ttf',
+          italic: 'https://fonts.gstatic.com/popular-italic.ttf',
+        },
       },
-    }] });
+      {
+        family: 'Another Serif',
+        category: 'serif',
+        files: { regular: 'https://fonts.gstatic.com/another-regular.ttf' },
+      },
+    ] });
     expect(catalog.source).toBe('Google Fonts Developer API');
-    expect(catalog.families[0]).toMatchObject({ family: 'Example Sans', category: 'SANS_SERIF' });
+    expect(catalog.families.map(({ family, popularityRank }) => ({ family, popularityRank }))).toEqual([
+      { family: 'Popular Sans', popularityRank: 1 },
+      { family: 'Another Serif', popularityRank: 2 },
+    ]);
+    expect(catalog.families[0]).toMatchObject({ category: 'SANS_SERIF' });
     expect(catalog.families[0]?.variants).toHaveLength(2);
   });
 
   it('filters by query and category', () => {
     const families = [
-      { family: 'Example Sans', category: 'SANS_SERIF', variants: [] },
-      { family: 'Example Serif', category: 'SERIF', variants: [] },
+      { family: 'Example Sans', category: 'SANS_SERIF', popularityRank: 1, variants: [] },
+      { family: 'Example Serif', category: 'SERIF', popularityRank: 2, variants: [] },
     ] satisfies GoogleFontFamily[];
     expect(filterFamilies(families, 'sans', 'all')).toHaveLength(1);
     expect(filterFamilies(families, '', 'SERIF')[0]?.family).toBe('Example Serif');

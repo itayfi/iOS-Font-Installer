@@ -19,6 +19,7 @@ export interface GoogleFontVariant {
 export interface GoogleFontFamily {
   family: string;
   category: string;
+  popularityRank: number;
   variants: GoogleFontVariant[];
 }
 
