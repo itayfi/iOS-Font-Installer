@@ -172,6 +172,8 @@ input:focus-visible, select:focus-visible, button:focus-visible, .file-drop:focu
 .selection-title { display: flex; justify-content: space-between; gap: 12px; align-items: center; }
 .selection-title h3 { margin: 0; font-size: 1.05rem; }
 .style-options { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 13px; }
+.style-options.preview-loading { display: none; }
+.preview-status { margin: 13px 0 0; }
 
 .style-option {
   display: flex;

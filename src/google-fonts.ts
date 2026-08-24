@@ -32,7 +32,6 @@ export function previewStylesheetUrl(family: GoogleFontFamily): string {
   const url = new URL('https://fonts.googleapis.com/css2');
   url.searchParams.set('family', `${family.family}:ital,wght@${tuples}`);
   url.searchParams.set('text', previewText);
-  url.searchParams.set('display', 'swap');
   return url.toString();
 }
 

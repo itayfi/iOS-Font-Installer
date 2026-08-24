@@ -62,6 +62,29 @@ function categoryLabel(category: string): string {
   return category.toLowerCase().replace('_', ' ').replace(/^./, (letter) => letter.toUpperCase());
 }
 
+function revealFontPreviewsWhenReady(
+  stylesheet: HTMLLinkElement,
+  family: GoogleFontFamily,
+  options: HTMLDivElement,
+  status: HTMLParagraphElement,
+): void {
+  const reveal = (): void => {
+    if (stylesheet !== previewStylesheet) return;
+    options.classList.remove('preview-loading');
+    options.removeAttribute('aria-busy');
+    status.remove();
+  };
+
+  stylesheet.addEventListener('load', async () => {
+    const familyName = `"${family.family.replaceAll('"', '\\"')}"`;
+    await Promise.allSettled(family.variants.map((variant) =>
+      document.fonts.load(`${variant.style} ${variant.weight} 1rem ${familyName}`, variant.label)
+    ));
+    reveal();
+  }, { once: true });
+  stylesheet.addEventListener('error', reveal, { once: true });
+}
+
 function renderResults(): void {
   if (!catalog) return;
   const matches = filterFamilies(catalog.families, searchInput.value, categorySelect.value);
@@ -103,7 +126,6 @@ function selectFamily(family: GoogleFontFamily): void {
   previewStylesheet = document.createElement('link');
   previewStylesheet.rel = 'stylesheet';
   previewStylesheet.href = previewStylesheetUrl(family);
-  document.head.append(previewStylesheet);
 
   const heading = document.createElement('div');
   heading.className = 'selection-title';
@@ -117,6 +139,11 @@ function selectFamily(family: GoogleFontFamily): void {
 
   const options = document.createElement('div');
   options.className = 'style-options';
+  options.classList.add('preview-loading');
+  options.setAttribute('aria-busy', 'true');
+  const previewStatus = document.createElement('p');
+  previewStatus.className = 'muted preview-status';
+  previewStatus.textContent = 'Loading font previews…';
   family.variants.forEach((variant) => {
     const label = document.createElement('label');
     label.className = 'style-option';
@@ -138,7 +165,9 @@ function selectFamily(family: GoogleFontFamily): void {
     options.querySelectorAll<HTMLInputElement>('input').forEach((checkbox) => { checkbox.checked = true; });
     invalidateProfile();
   });
-  familySelection.append(heading, options);
+  familySelection.append(heading, previewStatus, options);
+  revealFontPreviewsWhenReady(previewStylesheet, family, options, previewStatus);
+  document.head.append(previewStylesheet);
   familySelection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
