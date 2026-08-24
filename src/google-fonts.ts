@@ -19,6 +19,23 @@ export async function loadCatalog(signal?: AbortSignal): Promise<GoogleFontCatal
   return response.json() as Promise<GoogleFontCatalog>;
 }
 
+export function previewStylesheetUrl(family: GoogleFontFamily): string {
+  const tuples = family.variants
+    .map((variant) => [variant.style === 'italic' ? 1 : 0, variant.weight] as const)
+    .sort(([leftItalic, leftWeight], [rightItalic, rightWeight]) =>
+      leftItalic - rightItalic || leftWeight - rightWeight
+    )
+    .filter((tuple, index, all) => index === 0 || tuple[0] !== all[index - 1]?.[0] || tuple[1] !== all[index - 1]?.[1])
+    .map(([italic, weight]) => `${italic},${weight}`)
+    .join(';');
+  const previewText = [...new Set(family.variants.flatMap((variant) => [...variant.label]))].join('');
+  const url = new URL('https://fonts.googleapis.com/css2');
+  url.searchParams.set('family', `${family.family}:ital,wght@${tuples}`);
+  url.searchParams.set('text', previewText);
+  url.searchParams.set('display', 'swap');
+  return url.toString();
+}
+
 export async function downloadVariant(
   family: GoogleFontFamily,
   variant: GoogleFontVariant,

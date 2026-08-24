@@ -154,7 +154,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, .file-drop:focu
   transition: background 160ms ease;
 }
 
-.font-card:hover { background: var(--surface-2); }
+.font-card:hover { background: var(--surface-3); }
 .font-card strong { display: block; font-size: .9rem; font-weight: 600; }
 .font-card small { color: var(--muted); font-size: .72rem; }
 .font-card > span:last-child { color: var(--quiet); font-size: 1.15rem; }
@@ -184,8 +184,10 @@ input:focus-visible, select:focus-visible, button:focus-visible, .file-drop:focu
   font-size: .82rem;
 }
 
+.style-option:hover { background: var(--surface-3); }
 .style-option:has(input:checked) { border-color: rgb(0 157 117 / 65%); background: var(--accent-soft); }
 .style-option input { width: auto; }
+.variant-name { font-size: 1.05rem; line-height: 1.35; }
 
 .link-button {
   border: 0;
@@ -200,7 +202,7 @@ input:focus-visible, select:focus-visible, button:focus-visible, .file-drop:focu
 .file-drop { display: inline-block; }
 input[type="file"] { display: none; }
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-.form-grid label { color: var(--label); font-size: .8rem; font-weight: 600; }
+.form-grid label { color: var(--text); font-size: .8rem; font-weight: 600; }
 .form-grid label span { color: var(--muted); font-weight: 400; }
 .form-grid input { display: block; margin-top: 7px; }
 .form-grid .wide { grid-column: 1 / -1; }

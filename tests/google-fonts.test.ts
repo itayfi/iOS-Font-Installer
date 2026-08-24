@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { filterFamilies } from '../src/google-fonts';
+import { filterFamilies, previewStylesheetUrl } from '../src/google-fonts';
 import { buildCatalog, variantFromApi } from '../scripts/build-font-catalog';
 import type { GoogleFontFamily } from '../src/types';
 
@@ -45,5 +45,24 @@ describe('Google Fonts catalog', () => {
     ] satisfies GoogleFontFamily[];
     expect(filterFamilies(families, 'sans', 'all')).toHaveLength(1);
     expect(filterFamilies(families, '', 'SERIF')[0]?.family).toBe('Example Serif');
+  });
+
+  it('builds a text-optimized CSS preview request in API tuple order', () => {
+    const family = {
+      family: 'Example Sans',
+      category: 'SANS_SERIF',
+      popularityRank: 1,
+      variants: [
+        { filename: 'bold-italic.ttf', url: 'https://fonts.gstatic.com/bold-italic.ttf', style: 'italic', weight: 700, label: 'Bold Italic' },
+        { filename: 'regular.ttf', url: 'https://fonts.gstatic.com/regular.ttf', style: 'normal', weight: 400, label: 'Regular' },
+        { filename: 'bold.ttf', url: 'https://fonts.gstatic.com/bold.ttf', style: 'normal', weight: 700, label: 'Bold' },
+      ],
+    } satisfies GoogleFontFamily;
+    const url = new URL(previewStylesheetUrl(family));
+
+    expect(url.origin + url.pathname).toBe('https://fonts.googleapis.com/css2');
+    expect(url.searchParams.get('family')).toBe('Example Sans:ital,wght@0,400;0,700;1,700');
+    expect(url.searchParams.get('text')).toContain('R');
+    expect(url.searchParams.get('display')).toBe('swap');
   });
 });

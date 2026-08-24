@@ -1,6 +1,6 @@
 import './styles.css';
 import { buildProfile, downloadProfile, identifierForFamily, randomIdentifier } from './profile';
-import { downloadVariant, filterFamilies, loadCatalog } from './google-fonts';
+import { downloadVariant, filterFamilies, loadCatalog, previewStylesheetUrl } from './google-fonts';
 import { readLocalFonts } from './local-fonts';
 import type { FontAsset, GoogleFontCatalog, GoogleFontFamily } from './types';
 
@@ -32,6 +32,7 @@ let source: 'google' | 'upload' = 'google';
 let catalog: GoogleFontCatalog | null = null;
 let selectedFamily: GoogleFontFamily | null = null;
 let preparedProfile: string | null = null;
+let previewStylesheet: HTMLLinkElement | null = null;
 
 function setStatus(message: string, error = false): void {
   actionStatus.textContent = message;
@@ -98,6 +99,12 @@ function selectFamily(family: GoogleFontFamily): void {
   familySelection.hidden = false;
   familySelection.replaceChildren();
 
+  previewStylesheet?.remove();
+  previewStylesheet = document.createElement('link');
+  previewStylesheet.rel = 'stylesheet';
+  previewStylesheet.href = previewStylesheetUrl(family);
+  document.head.append(previewStylesheet);
+
   const heading = document.createElement('div');
   heading.className = 'selection-title';
   const title = document.createElement('h3');
@@ -118,7 +125,13 @@ function selectFamily(family: GoogleFontFamily): void {
     checkbox.value = variant.url;
     checkbox.checked = variant.weight === 400 && variant.style === 'normal';
     checkbox.addEventListener('change', invalidateProfile);
-    label.append(checkbox, document.createTextNode(variant.label));
+    const variantName = document.createElement('span');
+    variantName.className = 'variant-name';
+    variantName.textContent = variant.label;
+    variantName.style.fontFamily = `"${family.family}", Montserrat, sans-serif`;
+    variantName.style.fontStyle = variant.style;
+    variantName.style.fontWeight = String(variant.weight);
+    label.append(checkbox, variantName);
     options.append(label);
   });
   selectAll.addEventListener('click', () => {
