@@ -65,8 +65,8 @@ function renderResults(): void {
   if (!catalog) return;
   const matches = filterFamilies(catalog.families, searchInput.value, categorySelect.value);
   const visible = matches.slice(0, 60);
-  catalogStatus.textContent = `${matches.length.toLocaleString()} static font families${matches.length > visible.length ? ` · showing first ${visible.length}` : ''}`;
-  results.replaceChildren(...visible.map((family) => {
+  catalogStatus.textContent = `${matches.length.toLocaleString()} static font families`;
+  const cards: HTMLElement[] = visible.map((family) => {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'font-card';
@@ -77,7 +77,16 @@ function renderResults(): void {
     if (small) small.textContent = `${categoryLabel(family.category)} · ${family.variants.length} style${family.variants.length === 1 ? '' : 's'}`;
     button.addEventListener('click', () => selectFamily(family));
     return button;
-  }));
+  });
+
+  if (matches.length > visible.length) {
+    const message = document.createElement('p');
+    message.className = 'font-results-message';
+    message.textContent = `Showing the ${visible.length} most popular matches. Search to find a specific family.`;
+    cards.push(message);
+  }
+
+  results.replaceChildren(...cards);
 }
 
 function selectFamily(family: GoogleFontFamily): void {
